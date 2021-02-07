@@ -307,12 +307,12 @@ void IT8951HostAreaPackedPixelWrite(IT8951LdImgInfo* pstLdImgInfo)
 
     IT8951LoadImgStart(pstLdImgInfo);
 
+
+    LCDWriteNData(pusFrameBuf, gstI80DevInfo.usPanelW * gstI80DevInfo.usPanelH / 2);
+	IT8951LoadImgEnd();
     t = clock() - t;
     double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-
-    LCDWriteNData(pusFrameBuf, 1872 * 1404 / 2);
     printf("LCDWriteNData took %f seconds to execute \n", time_taken);
-	IT8951LoadImgEnd();
 }
 
 //-----------------------------------------------------------
@@ -347,7 +347,7 @@ uint8_t *IT8951_Init(int expected_width, int expected_height, int reverted)
 	bcm2835_spi_begin();
 	bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);   		//default
 	bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);               		//default
-	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16);		//default
+	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_32);		//default
 	
 	bcm2835_gpio_fsel(CS, BCM2835_GPIO_FSEL_OUTP);  
 	bcm2835_gpio_fsel(HRDY, BCM2835_GPIO_FSEL_INPT);
@@ -404,22 +404,4 @@ void IT8951_Cancel()
 
 	bcm2835_spi_end();
 	bcm2835_close();
-}
-
-
-void IT8951_Display4BppBuffer()
-{
-	//Load Image from Host to IT8951 Image Buffer
-    clock_t t;
-    t = clock();
-    IT8951HostAreaPackedPixelWrite(&stLdImgInfo);
-    t = clock() - t;
-    double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-
-    printf("IT8951HostAreaPackedPixelWrite took %f seconds to execute \n", time_taken);
-
-	//Display Area ?V (x,y,w,h) with mode 2 for fast gray clear mode - depends on current waveform
-    IT8951DisplayArea(0,0, gstI80DevInfo.usPanelW, gstI80DevInfo.usPanelH, 2);
-
-//    IT8951WaitForDisplayReady();
 }

@@ -1,47 +1,44 @@
 #ifndef _IT8951_H_
 #define _IT8951_H_
 
-#include <bcm2835.h>
+#include "bcm2835.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define CS 				8
-#define HRDY 	        24
-#define RESET 	        17
-#define VCOM			1610 //e.g. -1.53 = 1530 = 0x5FA
+#define CS                8
+#define HRDY            24
+#define RESET            17
+#define VCOM            1610 //e.g. -1.53 = 1530 = 0x5FA
 
 //prototype of structure
 //structure prototype 1
-typedef struct IT8951LdImgInfo
-{
+typedef struct IT8951LdImgInfo {
     uint16_t usEndianType; //little or Big Endian
     uint16_t usPixelFormat; //bpp
     uint16_t usRotate; //Rotate mode
     uint32_t ulStartFBAddr; //Start address of source Frame buffer
     uint32_t ulImgBufBaseAddr;//Base address of target image buffer
-    
-}IT8951LdImgInfo;
+
+} IT8951LdImgInfo;
 
 //structure prototype 2
-typedef struct IT8951AreaImgInfo
-{
+typedef struct IT8951AreaImgInfo {
     uint16_t usX;
     uint16_t usY;
     uint16_t usWidth;
     uint16_t usHeight;
-}IT8951AreaImgInfo;
+} IT8951AreaImgInfo;
 
-typedef struct
-{
+typedef struct {
     uint16_t usPanelW;
     uint16_t usPanelH;
     uint16_t usImgBufAddrL;
     uint16_t usImgBufAddrH;
-    uint16_t usFWVersion[8]; 	//16 Bytes String
-    uint16_t usLUTVersion[8]; 	//16 Bytes String
-}IT8951DevInfo;
+    uint16_t usFWVersion[8];    //16 Bytes String
+    uint16_t usLUTVersion[8];    //16 Bytes String
+} IT8951DevInfo;
 
 //Built in I80 Command Code
 #define IT8951_TCON_SYS_RUN      0x0001
@@ -61,7 +58,7 @@ typedef struct
 #define USDEF_I80_CMD_DPY_AREA     0x0034
 #define USDEF_I80_CMD_GET_DEV_INFO 0x0302
 #define USDEF_I80_CMD_DPY_BUF_AREA 0x0037
-#define USDEF_I80_CMD_VCOM		   0x0039
+#define USDEF_I80_CMD_VCOM           0x0039
 
 //Panel
 #define IT8951_PANEL_WIDTH   1024 //it Get Device information
@@ -127,9 +124,21 @@ typedef struct
 
 #define TEST_REMOTE 1
 
-uint8_t* IT8951_Init(int expected_width, int expected_height, int should_revert);
+uint8_t *IT8951_Init(int expected_width, int expected_height, int should_revert);
+
 void IT8951_Cancel(void);
+
 void IT8951_Display4BppBuffer();
+
+IT8951DevInfo gstI80DevInfo;
+
+void IT8951DisplayArea(uint16_t usX, uint16_t usY, uint16_t usW, uint16_t usH, uint16_t usDpyMode);
+
+void IT8951WaitForDisplayReady();
+
+void IT8951HostAreaPackedPixelWrite(IT8951LdImgInfo *pstLdImgInfo);
+
+IT8951LdImgInfo stLdImgInfo;
 
 #endif
 
