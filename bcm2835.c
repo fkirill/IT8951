@@ -60,7 +60,7 @@ volatile uint32_t *bcm2835_spi1 = (uint32_t *)MAP_FAILED;
 // It prevents access to the kernel memory, and does not do any peripheral access
 // Instead it prints out what it _would_ do if debug were 0
  */
-static uint8_t debug = 1;
+static uint8_t debug = 0;
 
 /* RPI 4 has different pullup registers - we need to know if we have that type */
 
