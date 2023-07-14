@@ -27,7 +27,7 @@ bool start_board()
         printf("DEV_Module_Init failed\n");
         return false;
     }
-    Dev_Info = EPD_IT8951_Init(-1520);
+    Dev_Info = EPD_IT8951_Init(1520);
     // get some important info from Dev_Info structure
     printf("Panel Width = %d, panel height = %d\n", Dev_Info.Panel_W, Dev_Info.Panel_H);
     Init_Target_Memory_Addr = Dev_Info.Memory_Addr_L | (Dev_Info.Memory_Addr_H << 16);
