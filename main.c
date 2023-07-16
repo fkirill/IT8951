@@ -27,7 +27,7 @@ bool start_board()
         printf("DEV_Module_Init failed\n");
         return false;
     }
-    Dev_Info = EPD_IT8951_Init(1520);
+    Dev_Info = EPD_IT8951_Init(1520); // VCOM = -1.52
     // get some important info from Dev_Info structure
     printf("Panel Width = %d, panel height = %d\n", Dev_Info.Panel_W, Dev_Info.Panel_H);
     Init_Target_Memory_Addr = Dev_Info.Memory_Addr_L | (Dev_Info.Memory_Addr_H << 16);
@@ -140,36 +140,23 @@ int readImage(FILE *file, Image *image, uint8_t **imageBufPtr, uint16_t maxWidth
     image->startY = (imageheader[7] << 8) + imageheader[8];
     image->width = (imageheader[1] << 8) + imageheader[2];
     image->height = (imageheader[3] << 8) + imageheader[4];
-    if ((image->startX + image->width >= maxWidth) ||
-        (image->startY + image->height != maxHeight))
+    if ((image->startX + image->width > maxWidth) ||
+        (image->startY + image->height > maxHeight))
     {
-        printf("image size wrong, x = %u, y = %y, w = %u, h = %u\n",
+        printf("image size wrong, x = %u, y = %u, w = %u, h = %u\n",
                (int)image->startX, (int)image->startY, (int)image->width, (int)image->height);
         return 1;
     }
     uint32_t bufSize = image->width * image->height / 2;
     uint8_t *imageBuf = malloc(bufSize);
-    imageBufPtr = &imageBuf;
+    *imageBufPtr = imageBuf;
     read = fread(imageBuf, 1, bufSize, file);
     if (read != bufSize)
     {
         printf("error reading image data, read = %zu, bufSize = %u\n", read, bufSize);
         return 1;
     }
-    // uint32_t nonWhiteCount = 0;
-    // for (int i = 0; i < bufSize; i++)
-    // {
-    //     if (hostFrameBuf[i] != 0xff)
-    //     {
-    //         nonWhiteCount++;
-    //     }
-    // }
-    // printf("nonWhiteCount = %u\n", nonWhiteCount);
     return 0;
-}
-
-void displayRectangles(Image *image, uint8_t *imageBuf, uint32_t targetMemory)
-{
 }
 
 int main(int argc, char *argv[])
